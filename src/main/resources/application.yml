@@ -1,9 +1,3 @@
-info:
-  app:
-    name: ${spring.application.name}
-    version: 1.0.0
-    description: Bremersee's Spring Boot Admin Server.
-
 eureka:
   client:
     enabled: false
@@ -17,6 +11,9 @@ management:
         allowed-headers: "*"
         allowed-methods: "*"
         allowed-origins: "*"
+  endpoint:
+    health:
+      show-details: always
 
 server:
   port: ${SERVER_PORT:8080}
@@ -40,6 +37,9 @@ eureka:
     service-url:
       defaultZone: "http://eureka1:8761/eureka/,http://eureka2:8762/eureka/,http://eureka3:8763/eureka/"
 
+#server:
+#  forward-headers-strategy: native
+
 ---
 
 spring:
@@ -48,6 +48,10 @@ spring:
     inetutils:
       preferred-networks:
         - 10.0.7
+#  boot:
+#    admin:
+#      ui:
+#        public-url: https://web.dev.bremersee.org/admin
 
 ---
 
@@ -57,4 +61,8 @@ spring:
     inetutils:
       preferred-networks:
         - 172.16.1
+#  boot:
+#    admin:
+#      ui:
+#        public-url: https://admin.bremersee.org
 
