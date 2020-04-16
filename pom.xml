@@ -20,6 +20,8 @@
 		<gh-pages-staging-dir>${project.build.directory}/staging</gh-pages-staging-dir>
 
 		<start-class>org.bremersee.adminserver.Application</start-class>
+
+		<common-base.version>2.0.1-SNAPSHOT</common-base.version>
 	</properties>
 
 	<scm>
@@ -53,6 +55,17 @@
 	</distributionManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.bremersee</groupId>
+			<artifactId>common-base-web-starter</artifactId>
+			<version>${common-base.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bremersee</groupId>
+			<artifactId>common-base-security-starter</artifactId>
+			<version>${common-base.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>

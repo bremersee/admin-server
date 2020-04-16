@@ -1,3 +1,36 @@
+bremersee:
+  security:
+    cors:
+      allow-all: true
+    authentication:
+      enable-jwt-support: ${JWT_SUPPORT:false}
+      basic-auth-users:
+        - name: "admin"
+          password: "admin"
+          authorities:
+            - "ROLE_USER"
+            - "ROLE_ADMIN"
+            - "ROLE_ACTUATOR"
+        - name: "actuator"
+          password: "actuator"
+          authorities:
+            - "ROLE_ACTUATOR"
+        - name: "user"
+          password: "user"
+          authorities:
+            - "ROLE_USER"
+      password-flow:
+        client-id: ${OPENID_CLIENT_ID:omnia}
+        client-secret: ${OPENID_CLIENT_SECRET:changeit}
+        token-endpoint: ${OPENID_TOKEN_ENDPOINT:https://openid.dev.bremersee.org/auth/realms/omnia/protocol/openid-connect/token}
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://openid.dev.bremersee.org/auth/realms/omnia/protocol/openid-connect/certs
+
 eureka:
   client:
     enabled: false
@@ -53,6 +86,15 @@ spring:
 #      ui:
 #        public-url: https://web.dev.bremersee.org/admin
 
+bremersee:
+  security:
+    authentication:
+      actuator:
+        ip-addresses:
+          - 127.0.0.1/32
+          - ::1
+          - 10.0.7.0/24
+
 ---
 
 spring:
@@ -66,3 +108,11 @@ spring:
 #      ui:
 #        public-url: https://admin.bremersee.org
 
+bremersee:
+  security:
+    authentication:
+      actuator:
+        ip-addresses:
+          - 127.0.0.1/32
+          - ::1
+          - 172.16.1.0/24
