@@ -1,36 +1,13 @@
-bremersee:
-  security:
-    cors:
-      allow-all: true
-    authentication:
-      enable-jwt-support: ${JWT_SUPPORT:false}
-      basic-auth-users:
-        - name: "admin"
-          password: "admin"
-          authorities:
-            - "ROLE_USER"
-            - "ROLE_ADMIN"
-            - "ROLE_ACTUATOR"
-        - name: "actuator"
-          password: "actuator"
-          authorities:
-            - "ROLE_ACTUATOR"
-        - name: "user"
-          password: "user"
-          authorities:
-            - "ROLE_USER"
-      password-flow:
-        client-id: ${OPENID_CLIENT_ID:omnia}
-        client-secret: ${OPENID_CLIENT_SECRET:changeit}
-        token-endpoint: ${OPENID_TOKEN_ENDPOINT:https://openid.dev.bremersee.org/auth/realms/omnia/protocol/openid-connect/token}
-
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: https://openid.dev.bremersee.org/auth/realms/omnia/protocol/openid-connect/certs
-
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+  boot:
+    admin:
+      notify:
+        mail:
+          enabled: false
 eureka:
   client:
     enabled: false
@@ -47,6 +24,9 @@ management:
   endpoint:
     health:
       show-details: always
+  health:
+    mail:
+      enabled: false
 
 server:
   port: ${SERVER_PORT:8080}
@@ -54,65 +34,28 @@ server:
 ---
 
 spring:
-  profiles: swarm
-
-eureka:
-  instance:
-    prefer-ip-address: true
-    hostname: ${HOST_NAME:localhost}
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    non-secure-port: ${server.port:80}
-
-  client:
-    enabled: true
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: "http://eureka1:8761/eureka/,http://eureka2:8762/eureka/,http://eureka3:8763/eureka/"
-
-#server:
-#  forward-headers-strategy: native
-
----
-
-spring:
-  profiles: dev
-  cloud:
-    inetutils:
-      preferred-networks:
-        - 10.0.7
-#  boot:
-#    admin:
-#      ui:
-#        public-url: https://web.dev.bremersee.org/admin
+  profiles: basic-auth
 
 bremersee:
   security:
     authentication:
+      enable-jwt-support: false
+      basic-auth-users:
+        - name: "admin"
+          password: "admin"
+          authorities:
+            - "ROLE_ADMIN"
+            - "ROLE_ACTUATOR_ADMIN"
+        - name: "actuator"
+          password: "actuator"
+          authorities:
+            - "ROLE_ADMIN"
+            - "ROLE_ACTUATOR"
+      application:
+        admin-roles:
+          - "ROLE_ADMIN"
       actuator:
-        ip-addresses:
-          - 127.0.0.1/32
-          - ::1
-          - 10.0.7.0/24
-
----
-
-spring:
-  profiles: prod
-  cloud:
-    inetutils:
-      preferred-networks:
-        - 172.16.1
-#  boot:
-#    admin:
-#      ui:
-#        public-url: https://admin.bremersee.org
-
-bremersee:
-  security:
-    authentication:
-      actuator:
-        ip-addresses:
-          - 127.0.0.1/32
-          - ::1
-          - 172.16.1.0/24
+        roles:
+          - "ROLE_ACTUATOR"
+        admin-roles:
+          - "ROLE_ACTUATOR_ADMIN"
