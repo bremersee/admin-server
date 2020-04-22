@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">admin-server</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.adminserver.config</a> &gt; <span class="el_source">SecurityConfiguration.java</span></div><h1>SecurityConfiguration.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.adminserver.config;
+
+import de.codecentric.boot.admin.server.config.AdminServerProperties;
+import java.util.UUID;
+import org.bremersee.security.authentication.AuthenticationProperties;
+import org.bremersee.security.authentication.PasswordFlowAuthenticationManager;
+import org.bremersee.security.core.AuthorityConstants;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.Assert;
+
+/**
+ * The security configuration.
+ */
+@Configuration
+@EnableWebSecurity
+<span class="fc" id="L46">public class SecurityConfiguration {</span>
+
+  /**
+   * The simple user authentication.
+   */
+  @ConditionalOnProperty(
+      prefix = &quot;bremersee.security.authentication&quot;,
+      name = &quot;enable-jwt-support&quot;,
+      havingValue = &quot;false&quot;, matchIfMissing = true)
+  @Configuration
+  @EnableConfigurationProperties(AuthenticationProperties.class)
+  static class SimpleUserAuthentication extends WebSecurityConfigurerAdapter {
+
+    private AdminServerProperties adminServer;
+
+    private AuthenticationProperties properties;
+
+    /**
+     * Instantiates a new simple user authentication.
+     *
+     * @param adminServer the admin server
+     * @param properties the properties
+     */
+    public SimpleUserAuthentication(
+        AdminServerProperties adminServer,
+<span class="fc" id="L71">        AuthenticationProperties properties) {</span>
+<span class="fc" id="L72">      this.adminServer = adminServer;</span>
+<span class="fc" id="L73">      this.properties = properties;</span>
+<span class="fc" id="L74">    }</span>
+
+    @SuppressWarnings(&quot;DuplicatedCode&quot;)
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+<span class="fc" id="L80">      SavedRequestAwareAuthenticationSuccessHandler successHandler</span>
+          = new SavedRequestAwareAuthenticationSuccessHandler();
+<span class="fc" id="L82">      successHandler.setTargetUrlParameter(&quot;redirectTo&quot;);</span>
+<span class="fc" id="L83">      successHandler.setDefaultTargetUrl(this.adminServer.path(&quot;/&quot;));</span>
+
+<span class="fc" id="L85">      http</span>
+<span class="fc" id="L86">          .authorizeRequests((authorizeRequests) -&gt; authorizeRequests</span>
+<span class="fc" id="L87">              .antMatchers(adminServer.path(&quot;/assets/**&quot;)).permitAll()</span>
+<span class="fc" id="L88">              .antMatchers(adminServer.path(&quot;/login&quot;)).permitAll()</span>
+<span class="fc" id="L89">              .antMatchers(adminServer.path(&quot;/actuator/health&quot;)).permitAll()</span>
+<span class="fc" id="L90">              .antMatchers(adminServer.path(&quot;/actuator/info&quot;)).permitAll()</span>
+<span class="fc" id="L91">              .antMatchers(HttpMethod.OPTIONS, adminServer.path(&quot;/actuator/**&quot;)).permitAll()</span>
+<span class="fc" id="L92">              .antMatchers(HttpMethod.GET, adminServer.path(&quot;/actuator/**&quot;))</span>
+<span class="fc" id="L93">              .access(properties.getActuator()</span>
+<span class="fc" id="L94">                  .buildAccessExpression(properties::ensureRolePrefix))</span>
+<span class="fc" id="L95">              .antMatchers(adminServer.path(&quot;/actuator/**&quot;))</span>
+<span class="fc" id="L96">              .access(properties.getActuator()</span>
+<span class="fc" id="L97">                  .buildAdminAccessExpression(properties::ensureRolePrefix))</span>
+<span class="fc" id="L98">              .anyRequest()</span>
+<span class="fc" id="L99">              .access(properties.getApplication().buildAccessExpression(</span>
+                  false, false, false, true,
+<span class="fc" id="L101">                  properties::ensureRolePrefix,</span>
+                  AuthorityConstants.ADMIN_ROLE_NAME)))
+<span class="fc" id="L103">          .formLogin((formLogin) -&gt; formLogin</span>
+<span class="fc" id="L104">              .loginPage(adminServer.path(&quot;/login&quot;)).successHandler(successHandler)</span>
+<span class="fc" id="L105">              .and())</span>
+<span class="fc" id="L106">          .logout((logout) -&gt; logout.logoutUrl(adminServer.path(&quot;/logout&quot;)))</span>
+<span class="fc" id="L107">          .httpBasic(Customizer.withDefaults())</span>
+<span class="fc" id="L108">          .csrf((csrf) -&gt; csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())</span>
+<span class="fc" id="L109">              .ignoringRequestMatchers(</span>
+<span class="fc" id="L110">                  new AntPathRequestMatcher(adminServer.path(&quot;/instances&quot;),</span>
+<span class="fc" id="L111">                      HttpMethod.POST.toString()),</span>
+<span class="fc" id="L112">                  new AntPathRequestMatcher(adminServer.path(&quot;/instances/*&quot;),</span>
+<span class="fc" id="L113">                      HttpMethod.DELETE.toString()),</span>
+<span class="fc" id="L114">                  new AntPathRequestMatcher(adminServer.path(&quot;/actuator/**&quot;))</span>
+              ))
+<span class="fc" id="L116">          .rememberMe((rememberMe) -&gt; rememberMe.key(UUID.randomUUID().toString())</span>
+<span class="fc" id="L117">              .tokenValiditySeconds(1209600));</span>
+<span class="fc" id="L118">    }</span>
+
+    @Bean
+    @Override
+    public UserDetailsService userDetailsService() {
+<span class="fc" id="L123">      return new InMemoryUserDetailsManager(properties.buildBasicAuthUserDetails());</span>
+    }
+
+  }
+
+  /**
+   * The password flow authentication.
+   */
+  @ConditionalOnProperty(
+      prefix = &quot;bremersee.security.authentication&quot;,
+      name = &quot;enable-jwt-support&quot;,
+      havingValue = &quot;true&quot;)
+  @Configuration
+  @EnableConfigurationProperties(AuthenticationProperties.class)
+  static class PasswordFlowAuthentication extends WebSecurityConfigurerAdapter {
+
+    private AdminServerProperties adminServer;
+
+    private AuthenticationProperties properties;
+
+    private PasswordFlowAuthenticationManager passwordFlowAuthenticationManager;
+
+    /**
+     * Instantiates a new password flow authentication.
+     *
+     * @param adminServer the admin server
+     * @param properties the properties
+     * @param passwordFlowAuthenticationManager the password flow authentication manager
+     */
+    public PasswordFlowAuthentication(
+        AdminServerProperties adminServer,
+        AuthenticationProperties properties,
+<span class="nc" id="L155">        ObjectProvider&lt;PasswordFlowAuthenticationManager&gt; passwordFlowAuthenticationManager) {</span>
+<span class="nc" id="L156">      this.adminServer = adminServer;</span>
+<span class="nc" id="L157">      this.properties = properties;</span>
+<span class="nc" id="L158">      this.passwordFlowAuthenticationManager = passwordFlowAuthenticationManager.getIfAvailable();</span>
+<span class="nc" id="L159">      Assert.notNull(</span>
+          this.passwordFlowAuthenticationManager,
+          &quot;Password flow authentication manager must be present.&quot;);
+<span class="nc" id="L162">    }</span>
+
+    @SuppressWarnings(&quot;DuplicatedCode&quot;)
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+<span class="nc" id="L168">      SavedRequestAwareAuthenticationSuccessHandler successHandler</span>
+          = new SavedRequestAwareAuthenticationSuccessHandler();
+<span class="nc" id="L170">      successHandler.setTargetUrlParameter(&quot;redirectTo&quot;);</span>
+<span class="nc" id="L171">      successHandler.setDefaultTargetUrl(adminServer.path(&quot;/&quot;));</span>
+
+<span class="nc" id="L173">      http</span>
+<span class="nc" id="L174">          .authorizeRequests((authorizeRequests) -&gt; authorizeRequests</span>
+<span class="nc" id="L175">              .antMatchers(adminServer.path(&quot;/assets/**&quot;)).permitAll()</span>
+<span class="nc" id="L176">              .antMatchers(adminServer.path(&quot;/login&quot;)).permitAll()</span>
+<span class="nc" id="L177">              .antMatchers(adminServer.path(&quot;/actuator/health&quot;)).permitAll()</span>
+<span class="nc" id="L178">              .antMatchers(adminServer.path(&quot;/actuator/info&quot;)).permitAll()</span>
+<span class="nc" id="L179">              .antMatchers(HttpMethod.OPTIONS, adminServer.path(&quot;/actuator/**&quot;)).permitAll()</span>
+<span class="nc" id="L180">              .antMatchers(HttpMethod.GET, adminServer.path(&quot;/actuator/**&quot;))</span>
+<span class="nc" id="L181">              .access(properties.getActuator()</span>
+<span class="nc" id="L182">                  .buildAccessExpression(properties::ensureRolePrefix))</span>
+<span class="nc" id="L183">              .antMatchers(adminServer.path(&quot;/actuator/**&quot;))</span>
+<span class="nc" id="L184">              .access(properties.getActuator()</span>
+<span class="nc" id="L185">                  .buildAdminAccessExpression(properties::ensureRolePrefix))</span>
+<span class="nc" id="L186">              .anyRequest()</span>
+<span class="nc" id="L187">              .access(properties.getApplication().buildAccessExpression(</span>
+                  false, false, false, true,
+<span class="nc" id="L189">                  properties::ensureRolePrefix,</span>
+                  AuthorityConstants.ADMIN_ROLE_NAME)))
+<span class="nc" id="L191">          .authenticationProvider(passwordFlowAuthenticationManager)</span>
+<span class="nc" id="L192">          .formLogin((formLogin) -&gt; formLogin</span>
+<span class="nc" id="L193">              .loginPage(adminServer.path(&quot;/login&quot;)).successHandler(successHandler)</span>
+<span class="nc" id="L194">              .and())</span>
+<span class="nc" id="L195">          .logout((logout) -&gt; logout.logoutUrl(adminServer.path(&quot;/logout&quot;)))</span>
+<span class="nc" id="L196">          .httpBasic(Customizer.withDefaults())</span>
+<span class="nc" id="L197">          .csrf((csrf) -&gt; csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())</span>
+<span class="nc" id="L198">              .ignoringRequestMatchers(</span>
+<span class="nc" id="L199">                  new AntPathRequestMatcher(adminServer.path(&quot;/instances&quot;),</span>
+<span class="nc" id="L200">                      HttpMethod.POST.toString()),</span>
+<span class="nc" id="L201">                  new AntPathRequestMatcher(adminServer.path(&quot;/instances/*&quot;),</span>
+<span class="nc" id="L202">                      HttpMethod.DELETE.toString()),</span>
+<span class="nc" id="L203">                  new AntPathRequestMatcher(adminServer.path(&quot;/actuator/**&quot;))</span>
+              ))
+<span class="nc" id="L205">          .rememberMe((rememberMe) -&gt; rememberMe.key(UUID.randomUUID().toString())</span>
+<span class="nc" id="L206">              .tokenValiditySeconds(1209600));</span>
+<span class="nc" id="L207">    }</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
