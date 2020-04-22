@@ -1,0 +1,61 @@
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+  boot:
+    admin:
+      notify:
+        mail:
+          enabled: false
+eureka:
+  client:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      cors:
+        allowed-headers: "*"
+        allowed-methods: "*"
+        allowed-origins: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    mail:
+      enabled: false
+
+server:
+  port: ${SERVER_PORT:8080}
+
+---
+
+spring:
+  profiles: basic-auth
+
+bremersee:
+  security:
+    authentication:
+      enable-jwt-support: false
+      basic-auth-users:
+        - name: "admin"
+          password: "admin"
+          authorities:
+            - "ROLE_ADMIN"
+            - "ROLE_ACTUATOR_ADMIN"
+        - name: "actuator"
+          password: "actuator"
+          authorities:
+            - "ROLE_ADMIN"
+            - "ROLE_ACTUATOR"
+      application:
+        admin-roles:
+          - "ROLE_ADMIN"
+      actuator:
+        roles:
+          - "ROLE_ACTUATOR"
+        admin-roles:
+          - "ROLE_ACTUATOR_ADMIN"
