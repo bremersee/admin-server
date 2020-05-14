@@ -29,10 +29,8 @@ import org.springframework.test.context.ActiveProfiles;
 /**
  * The application tests.
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-    "bremersee.security.authentication.enable-jwt-support=false"
-})
-@ActiveProfiles({"basic-auth"})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles({"in-memory"})
 class ApplicationTests {
 
   private static final String actuatorUser = "actuator";
