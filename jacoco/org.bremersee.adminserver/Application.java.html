@@ -17,16 +17,18 @@
 package org.bremersee.adminserver;
 
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
+import org.bremersee.actuator.security.authentication.ActuatorSecurityAutoConfiguration;
+import org.bremersee.actuator.security.authentication.ResourceServerWithActuatorAutoConfiguration;
 import org.bremersee.context.MessageSourceAutoConfiguration;
 import org.bremersee.converter.ModelMapperAutoConfiguration;
 import org.bremersee.exception.RestApiExceptionMapperAutoConfiguration;
 import org.bremersee.exception.RestApiExceptionParserAutoConfiguration;
+import org.bremersee.security.authentication.ResourceServerAutoConfiguration;
 import org.bremersee.web.servlet.ApiExceptionResolverAutoConfiguration;
 import org.bremersee.web.servlet.BaseCommonConvertersAutoConfiguration;
 import org.bremersee.web.servlet.CorsAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryProperties;
 
 /**
  * The application.
@@ -34,28 +36,28 @@ import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryProperti
  * @author Christian Bremer
  */
 @SpringBootApplication(exclude = {
-		CorsAutoConfiguration.class,
-		ModelMapperAutoConfiguration.class,
-		MessageSourceAutoConfiguration.class,
-		RestApiExceptionMapperAutoConfiguration.class,
-		RestApiExceptionParserAutoConfiguration.class,
-		ApiExceptionResolverAutoConfiguration.class,
-		BaseCommonConvertersAutoConfiguration.class,
-		CorsAutoConfiguration.class
+    ActuatorSecurityAutoConfiguration.class,
+    ResourceServerAutoConfiguration.class,
+    ResourceServerWithActuatorAutoConfiguration.class,
+    CorsAutoConfiguration.class,
+    ModelMapperAutoConfiguration.class,
+    MessageSourceAutoConfiguration.class,
+    RestApiExceptionMapperAutoConfiguration.class,
+    RestApiExceptionParserAutoConfiguration.class,
+    ApiExceptionResolverAutoConfiguration.class,
+    BaseCommonConvertersAutoConfiguration.class
 })
 @EnableAdminServer
-<span class="fc" id="L47">public class Application {</span>
+<span class="fc" id="L51">public class Application {</span>
 
-	SimpleDiscoveryProperties.SimpleServiceInstance i;
-
-	/**
-	 * The entry point of application.
-	 *
-	 * @param args the input arguments
-	 */
-	public static void main(String[] args) {
-<span class="nc" id="L57">		SpringApplication.run(Application.class, args);</span>
-<span class="nc" id="L58">	}</span>
+  /**
+   * The entry point of application.
+   *
+   * @param args the input arguments
+   */
+  public static void main(String[] args) {
+<span class="nc" id="L59">    SpringApplication.run(Application.class, args);</span>
+<span class="nc" id="L60">  }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
