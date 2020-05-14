@@ -58,6 +58,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private final PasswordFlowAuthenticationManager authenticationManager;
 
+  /**
+   * Instantiates a new security configuration.
+   *
+   * @param adminServer the admin server
+   * @param authProperties the auth properties
+   * @param actuatorAuthProperties the actuator auth properties
+   * @param authenticationManagerProvider the authentication manager provider
+   */
   public SecurityConfiguration(
       AdminServerProperties adminServer,
       AuthProperties authProperties,
