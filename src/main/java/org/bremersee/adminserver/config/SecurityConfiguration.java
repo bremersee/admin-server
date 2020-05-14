@@ -18,6 +18,7 @@ package org.bremersee.adminserver.config;
 
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import org.bremersee.actuator.security.authentication.ActuatorAuthProperties;
@@ -76,7 +77,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     successHandler.setTargetUrlParameter("redirectTo");
     successHandler.setDefaultTargetUrl(this.adminServer.path("/"));
 
-    List<String> roles = new ArrayList<>(authProperties.getRoleDefinitions().get("admin"));
+    List<String> roles = new ArrayList<>(authProperties.getRoleDefinitions()
+        .getOrDefault("admin", Collections.emptyList()));
     if (roles.isEmpty()) {
       roles.add(AuthorityConstants.ADMIN_ROLE_NAME);
     }
