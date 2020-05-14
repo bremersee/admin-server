@@ -1,148 +1,144 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.bremersee</groupId>
-		<artifactId>common-service-parent</artifactId>
-		<version>2.0.2</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+  <parent>
+    <groupId>org.bremersee</groupId>
+    <artifactId>common-service-parent</artifactId>
+    <version>2.0.2</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
 
-	<artifactId>admin-server</artifactId>
-	<version>1.0.0</version>
-	<name>admin-server</name>
-	<description>Bremersee's Spring Boot Admin Server</description>
+  <artifactId>admin-server</artifactId>
+  <version>1.0.1-SNAPSHOT</version>
+  <name>admin-server</name>
+  <description>Bremersee's Spring Boot Admin Server</description>
 
-	<properties>
-		<github.repo>admin-server</github.repo>
-		<gh-pages-staging-dir>${project.build.directory}/staging</gh-pages-staging-dir>
+  <properties>
+    <github.repo>admin-server</github.repo>
+    <gh-pages-staging-dir>${project.build.directory}/staging</gh-pages-staging-dir>
 
-		<start-class>org.bremersee.adminserver.Application</start-class>
+    <start-class>org.bremersee.adminserver.Application</start-class>
 
-		<spring-boot-admin.version>2.2.2</spring-boot-admin.version>
-		<common-base.version>2.0.1</common-base.version>
-	</properties>
+    <spring-boot-admin.version>2.2.2</spring-boot-admin.version>
+    <common-base.version>2.1.0-SNAPSHOT</common-base.version>
+  </properties>
 
-	<scm>
-		<connection>scm:git:ssh://git@github.com:bremersee/admin-server.git</connection>
-		<developerConnection>
-			scm:git:ssh://git@github.com:bremersee/admin-server.git
-		</developerConnection>
-		<url>https://github.com/bremersee/admin-server</url>
-	</scm>
+  <scm>
+    <connection>scm:git:ssh://git@github.com:bremersee/admin-server.git</connection>
+    <developerConnection>
+      scm:git:ssh://git@github.com:bremersee/admin-server.git
+    </developerConnection>
+    <url>https://github.com/bremersee/admin-server</url>
+  </scm>
 
-	<issueManagement>
-		<url>https://github.com/bremersee/admin-server/issues</url>
-		<system>GitHub Issues</system>
-	</issueManagement>
+  <issueManagement>
+    <url>https://github.com/bremersee/admin-server/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
 
-	<distributionManagement>
-		<repository>
-			<id>bremersee-releases</id>
-			<url>https://nexus.bremersee.org/repository/maven-releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>bremersee-snapshots</id>
-			<url>https://nexus.bremersee.org/repository/maven-snapshots</url>
-		</snapshotRepository>
-		<site>
-			<id>bremersee-sites</id>
-			<url>
-				dav:https://nexus.bremersee.org/repository/maven-sites/admin-server/${project.version}
-			</url>
-		</site>
-	</distributionManagement>
+  <distributionManagement>
+    <repository>
+      <id>bremersee-releases</id>
+      <url>https://nexus.bremersee.org/repository/maven-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>bremersee-snapshots</id>
+      <url>https://nexus.bremersee.org/repository/maven-snapshots</url>
+    </snapshotRepository>
+    <site>
+      <id>bremersee-sites</id>
+      <url>
+        dav:https://nexus.bremersee.org/repository/maven-sites/admin-server/${project.version}
+      </url>
+    </site>
+  </distributionManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.bremersee</groupId>
-			<artifactId>common-base-web-starter</artifactId>
-			<version>${common-base.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.bremersee</groupId>
-			<artifactId>common-base-security-starter</artifactId>
-			<version>${common-base.version}</version>
-		</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.bremersee</groupId>
+      <artifactId>common-base-web-starter</artifactId>
+      <version>${common-base.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bremersee</groupId>
+      <artifactId>common-base-actuator-starter</artifactId>
+      <version>${common-base.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bremersee</groupId>
+      <artifactId>common-base-security-starter</artifactId>
+      <version>${common-base.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-server</artifactId>
-			<version>${spring-boot-admin.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.codecentric</groupId>
+      <artifactId>spring-boot-admin-starter-server</artifactId>
+      <version>${spring-boot-admin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
 
-		<!-- Actuator -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-prometheus</artifactId>
-		</dependency>
+    <!-- Eureka client -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+    </dependency>
 
-		<!-- Eureka client -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>
+    <!-- Config client -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.retry</groupId>
+      <artifactId>spring-retry</artifactId>
+    </dependency>
 
-		<!-- Config client -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-aop</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.retry</groupId>
-			<artifactId>spring-retry</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	</dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
 
 </project>

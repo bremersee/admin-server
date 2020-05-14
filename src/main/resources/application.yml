@@ -23,7 +23,7 @@ management:
         allowed-origins: "*"
   endpoint:
     health:
-      show-details: always
+      show-details: when_authorized
   health:
     mail:
       enabled: false
@@ -31,31 +31,31 @@ management:
 server:
   port: ${SERVER_PORT:8080}
 
+bremersee:
+  auth:
+    role-definitions:
+      admin:
+        - "ROLE_ADMIN"
+
 ---
 
 spring:
-  profiles: basic-auth
+  profiles: in-memory
 
 bremersee:
-  security:
-    authentication:
-      enable-jwt-support: false
-      basic-auth-users:
-        - name: "admin"
-          password: "admin"
-          authorities:
-            - "ROLE_ADMIN"
-            - "ROLE_ACTUATOR_ADMIN"
-        - name: "actuator"
-          password: "actuator"
-          authorities:
-            - "ROLE_ADMIN"
-            - "ROLE_ACTUATOR"
-      application:
-        admin-roles:
+  auth:
+    in-memory-users:
+      - name: "admin"
+        password: "admin"
+        authorities:
+          - "ROLE_USER"
           - "ROLE_ADMIN"
-      actuator:
-        roles:
+      - name: "actuator"
+        password: "actuator"
+        authorities:
           - "ROLE_ACTUATOR"
-        admin-roles:
           - "ROLE_ACTUATOR_ADMIN"
+      - name: "user"
+        password: "user"
+        authorities:
+          - "ROLE_USER"
