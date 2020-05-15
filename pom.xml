@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>admin-server</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <name>admin-server</name>
   <description>Bremersee's Spring Boot Admin Server</description>
 
@@ -22,8 +22,8 @@
 
     <start-class>org.bremersee.adminserver.Application</start-class>
 
-    <spring-boot-admin.version>2.2.2</spring-boot-admin.version>
-    <common-base.version>2.1.0-SNAPSHOT</common-base.version>
+    <spring-boot-admin.version>2.2.2</spring-boot-admin.version> <!-- Overwrites parent -->
+    <common-base.version>2.1.2</common-base.version>
   </properties>
 
   <scm>
