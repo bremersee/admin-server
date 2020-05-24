@@ -36,6 +36,8 @@ bremersee:
     role-definitions:
       admin:
         - "ROLE_ADMIN"
+  redis:
+    embedded: true
 
 ---
 
