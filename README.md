@@ -1,6 +1,6 @@
 # Bremersee's Spring Boot Admin Server
 
-[![codecov](https://codecov.io/gh/bremersee/admin-server/branch/develop/graph/badge.svg)](https://codecov.io/gh/bremersee/admin-server)
+[![codecov](https://codecov.io/gh/bremersee/admin-server/branch/master/graph/badge.svg)](https://codecov.io/gh/bremersee/admin-server)
 
 This admin server is more or less a plain Spring Boot Admin Server:
 
