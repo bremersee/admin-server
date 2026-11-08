@@ -16,41 +16,62 @@
 
 package org.bremersee.adminserver;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
  * The application tests.
+ *
+ * @author Christian Bremer
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles({"in-memory"})
+@ActiveProfiles({"test"})
 class ApplicationTests {
 
-  private static final String actuatorUser = "actuator";
+  private static final String USER = "admin";
 
-  private static final String actuatorPass = "actuator";
+  private static final String USER_PASS = "changeit";
 
   /**
-   * The rest template.
+   * The rest template builder.
    */
   @Autowired
-  TestRestTemplate restTemplate;
+  RestTemplateBuilder restTemplateBuilder;
+
+  /**
+   * The local server port.
+   */
+  @LocalServerPort
+  int port;
+
+  /**
+   * Base url of the local server.
+   *
+   * @return the base url of the local server
+   */
+  String baseUrl() {
+    return "http://localhost:" + port;
+  }
 
   /**
    * Fetch health.
    */
   @Test
   void fetchHealth() {
-    ResponseEntity<String> response = restTemplate
+    ResponseEntity<String> response = restTemplateBuilder
+        .baseUri(baseUrl())
+        .build()
         .getForEntity("/actuator/health", String.class);
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertThat(response.getStatusCode())
+        .isEqualTo(HttpStatus.OK);
   }
 
   /**
@@ -58,30 +79,26 @@ class ApplicationTests {
    */
   @Test
   void fetchInfo() {
-    ResponseEntity<String> response = restTemplate
+    ResponseEntity<String> response = restTemplateBuilder
+        .baseUri(baseUrl())
+        .build()
         .getForEntity("/actuator/info", String.class);
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertThat(response.getStatusCode())
+        .isEqualTo(HttpStatus.OK);
   }
 
   /**
-   * Fetch metrics.
+   * Fetch beans.
    */
   @Test
-  void fetchMetrics() {
-    ResponseEntity<String> response = restTemplate
-        .withBasicAuth(actuatorUser, actuatorPass)
-        .getForEntity("/actuator/metrics", String.class);
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-  }
-
-  /**
-   * Fetch metrics and expect status 302 (because form login is enabled).
-   */
-  @Test
-  void fetchMetricsAndExpect302() {
-    ResponseEntity<String> response = restTemplate
-        .getForEntity("/actuator/metrics", String.class);
-    assertEquals(HttpStatus.FOUND, response.getStatusCode());
+  void fetchBeans() {
+    ResponseEntity<String> response = restTemplateBuilder
+        .basicAuthentication(USER, USER_PASS)
+        .baseUri(baseUrl())
+        .build()
+        .getForEntity("/actuator/beans", String.class);
+    assertThat(response.getStatusCode())
+        .isEqualTo(HttpStatus.OK);
   }
 
 }
