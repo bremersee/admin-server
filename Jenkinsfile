@@ -5,7 +5,7 @@ pipeline {
   environment {
     CODECOV_TOKEN = credentials('admin-server-codecov-token')
     BRANCH_NAME = "${GIT_BRANCH.split("/").size() > 1 ? GIT_BRANCH.split("/")[1] : GIT_BRANCH}"
-    NAME = 'admin'
+    NAME = 'admin-server'
     NON_SECURE_PORT = 8080
     PROFILES = 'eureka-client,mail,ldap-with-bind,ldap-auth,remember-me'
     DOCKER_IMAGE = 'bremersee/admin-server'
