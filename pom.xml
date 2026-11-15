@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.bremersee</groupId>
     <artifactId>common-service-parent</artifactId>
-    <version>6.1.6</version>
+    <version>6.1.7</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
@@ -17,6 +17,7 @@
   <name>admin-server</name>
   <description>Bremersee's Spring Boot Admin Server</description>
   <url>https://github.com/bremersee/admin-server</url>
+  <inceptionYear>2020</inceptionYear>
 
   <properties>
     <github.repo>admin-server</github.repo>
@@ -100,7 +101,7 @@
     </snapshotRepository>
     <site>
       <id>bremersee-sites</id>
-      <url>https://webdav.eixe.bremersee.org/maven-sites/admin-server/${project.version}</url>
+      <url>https://bremersee.github.io/admin-server/${project.version}</url>
     </site>
   </distributionManagement>
 
