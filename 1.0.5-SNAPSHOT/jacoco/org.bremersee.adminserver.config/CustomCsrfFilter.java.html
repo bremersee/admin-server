@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomCsrfFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">admin-server</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.adminserver.config</a> &gt; <span class="el_source">CustomCsrfFilter.java</span></div><h1>CustomCsrfFilter.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.adminserver.config;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import org.jspecify.annotations.NonNull;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
+
+/**
+ * The custom csrf filter is required to make CSRF token available to JavaScript.
+ *
+ * @author docs.spring-boot-admin.com
+ */
+class CustomCsrfFilter extends OncePerRequestFilter {
+
+  /**
+   * The constant CSRF_COOKIE_NAME.
+   */
+  public static final String CSRF_COOKIE_NAME = &quot;XSRF-TOKEN&quot;;
+
+  /**
+   * Instantiates a new custom csrf filter.
+   */
+  CustomCsrfFilter() {
+<span class="fc" id="L48">    super();</span>
+<span class="fc" id="L49">  }</span>
+
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest request,
+      @NonNull HttpServletResponse response,
+      @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+<span class="fc" id="L57">    CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());</span>
+
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">    if (csrf != null) {</span>
+<span class="fc" id="L60">      Cookie cookie = WebUtils.getCookie(request, CSRF_COOKIE_NAME);</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">      String token = isEmpty(csrf.getToken()) ? null : csrf.getToken();</span>
+
+<span class="pc bpc" id="L63" title="5 of 6 branches missed.">      if (cookie == null || token != null &amp;&amp; !token.equals(cookie.getValue())) {</span>
+<span class="fc" id="L64">        cookie = new Cookie(CSRF_COOKIE_NAME, token);</span>
+<span class="fc" id="L65">        cookie.setPath(&quot;/&quot;);</span>
+<span class="fc" id="L66">        response.addCookie(cookie);</span>
+      }
+    }
+
+<span class="fc" id="L70">    filterChain.doFilter(request, response);</span>
+<span class="fc" id="L71">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClusterConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">admin-server</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.adminserver.config</a> &gt; <span class="el_source">ClusterConfiguration.java</span></div><h1>ClusterConfiguration.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2026 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.adminserver.config;
+
+import static de.codecentric.boot.admin.server.config.AdminServerHazelcastAutoConfiguration.DEFAULT_NAME_EVENT_STORE_MAP;
+import static de.codecentric.boot.admin.server.config.AdminServerHazelcastAutoConfiguration.DEFAULT_NAME_SENT_NOTIFICATIONS_MAP;
+
+import com.hazelcast.config.Config;
+import com.hazelcast.config.EvictionConfig;
+import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.InMemoryFormat;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.config.MaxSizePolicy;
+import com.hazelcast.config.MergePolicyConfig;
+import com.hazelcast.config.NetworkConfig;
+import com.hazelcast.spi.merge.PutIfAbsentMergePolicy;
+import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;
+import de.codecentric.boot.admin.server.notify.Notifier;
+import de.codecentric.boot.admin.server.notify.filter.FilteringNotifier;
+import de.codecentric.boot.admin.server.notify.filter.NotificationFilter;
+import java.util.concurrent.ConcurrentMap;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
+import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+/**
+ * The cluster configuration (see &lt;a
+ * href=&quot;https://docs.spring-boot-admin.com/4.1.2/docs/server/Clustering&quot;&gt;Clustering&lt;/a&gt;).
+ *
+ * @author docs.spring-boot-admin.com
+ */
+@ConditionalOnBooleanProperty(prefix = &quot;spring.boot.admin.hazelcast&quot;, name = &quot;enabled&quot;)
+@Configuration
+class ClusterConfiguration {
+
+  JmxAutoConfiguration n;
+
+  /**
+   * Instantiates a new cluster configuration.
+   */
+  ClusterConfiguration() {
+<span class="nc" id="L60">    super();</span>
+<span class="nc" id="L61">  }</span>
+
+  /**
+   * Creates hazelcast config.
+   *
+   * @return the config
+   */
+  @Bean
+  Config hazelcastConfig() {
+    // This map is used to store the events.
+    // It should be configured to reliably hold all the data,
+    // Spring Boot Admin will compact the events, if there are too many
+<span class="nc" id="L73">    MapConfig eventStoreMap = new MapConfig(DEFAULT_NAME_EVENT_STORE_MAP)</span>
+<span class="nc" id="L74">        .setInMemoryFormat(InMemoryFormat.OBJECT)</span>
+<span class="nc" id="L75">        .setBackupCount(1)</span>
+<span class="nc" id="L76">        .setMergePolicyConfig(new MergePolicyConfig(PutIfAbsentMergePolicy.class.getName(), 100));</span>
+    // This map is used to deduplicate the notifications.
+    // If data in this map gets lost it should not be a big issue as it will atmost
+    // lead to
+    // the same notification to be sent by multiple instances
+<span class="nc" id="L81">    MapConfig sentNotificationsMap = new MapConfig(DEFAULT_NAME_SENT_NOTIFICATIONS_MAP)</span>
+<span class="nc" id="L82">        .setInMemoryFormat(InMemoryFormat.OBJECT)</span>
+<span class="nc" id="L83">        .setBackupCount(1)</span>
+<span class="nc" id="L84">        .setEvictionConfig(new EvictionConfig().setEvictionPolicy(EvictionPolicy.LRU)</span>
+<span class="nc" id="L85">            .setMaxSizePolicy(MaxSizePolicy.PER_NODE))</span>
+<span class="nc" id="L86">        .setMergePolicyConfig(new MergePolicyConfig(PutIfAbsentMergePolicy.class.getName(), 100));</span>
+
+    // This map is used to share notification filter rules across all cluster nodes.
+    // Filters added on one node will automatically be visible to all other nodes.
+    // Coming with 4.1.5
+    /*
+   MapConfig notificationFiltersMap = new MapConfig(DEFAULT_NAME_NOTIFICATION_FILTERS_MAP)
+        .setInMemoryFormat(InMemoryFormat.OBJECT)
+        .setBackupCount(1)
+        .setMergePolicyConfig(new MergePolicyConfig(PutIfAbsentMergePolicy.class.getName(), 100));
+   */
+
+<span class="nc" id="L98">    Config config = new Config();</span>
+<span class="nc" id="L99">    config.addMapConfig(eventStoreMap);</span>
+<span class="nc" id="L100">    config.addMapConfig(sentNotificationsMap);</span>
+    //config.addMapConfig(notificationFiltersMap);
+<span class="nc" id="L102">    config.setProperty(&quot;hazelcast.jmx&quot;, &quot;true&quot;);</span>
+
+    // network and join configuration (simple defaults good for local/dev)
+<span class="nc" id="L105">    NetworkConfig network = config.getNetworkConfig();</span>
+<span class="nc" id="L106">    network</span>
+<span class="nc" id="L107">        .setPort(5701)</span>
+<span class="nc" id="L108">        .setPortAutoIncrement(true)</span>
+<span class="nc" id="L109">        .setPortCount(98);</span>
+
+<span class="nc" id="L111">    JoinConfig join = network.getJoin();</span>
+<span class="nc" id="L112">    join.getMulticastConfig().setEnabled(true);</span>
+
+<span class="nc" id="L114">    return config;</span>
+  }
+
+  // Coming with 4.1.5
+  /*
+  @Bean
+  @Primary
+  public FilteringNotifier filteringNotifier(
+      @Qualifier(&quot;mailNotifier&quot;) Notifier delegate,
+      InstanceRepository repository,
+      @Qualifier(&quot;notificationFiltersMap&quot;) ConcurrentMap&lt;String, NotificationFilter&gt; filters) {
+    FilteringNotifier fn = new FilteringNotifier(delegate, repository);
+
+    return fn;
+  }
+  */
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
