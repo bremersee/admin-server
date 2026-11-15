@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"org.bremersee.adminserver","c":"Application","l":"Application()","u":"%3Cinit%3E()","k":"3"},{"p":"org.bremersee.adminserver.config","c":"WebSecurityProperties","l":"ROLE_APPLICATION","k":"2"},{"p":"org.bremersee.adminserver.config","c":"WebSecurityProperties","l":"WebSecurityProperties()","u":"%3Cinit%3E()","k":"3"}];updateSearchResults();
