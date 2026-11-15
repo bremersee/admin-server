@@ -1,6 +1,6 @@
 # Bremersee's Spring Boot Admin Server
 
-[![codecov](https://codecov.io/gh/bremersee/admin-server/branch/master/graph/badge.svg)](https://codecov.io/gh/bremersee/admin-server)
+[![codecov](https://codecov.io/gh/bremersee/admin-server/branch/main/graph/badge.svg)](https://codecov.io/gh/bremersee/admin-server)
 
 This admin server is more or less a plain Spring Boot Admin Server:
 
@@ -11,8 +11,4 @@ This admin server is more or less a plain Spring Boot Admin Server:
 </dependency>
 ```
 
-## Maven Site
-
-- [Release](https://bremersee.github.io/admin-server/index.html)
-
-- [Snapshot](https://nexus.bremersee.org/repository/maven-sites/admin-server/1.0.4-SNAPSHOT-SNAPSHOT/index.html)
+[Maven-Site](https://bremersee.github.io/admin-server/1.0.5/index.html)
