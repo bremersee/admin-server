@@ -11,4 +11,4 @@ This admin server is more or less a plain Spring Boot Admin Server:
 </dependency>
 ```
 
-[Maven-Site](https://bremersee.github.io/admin-server/1.0.5/index.html)
+[Maven-Site](https://bremersee.github.io/admin-server/1.0.6-SNAPSHOT/index.html)

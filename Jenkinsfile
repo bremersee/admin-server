@@ -10,9 +10,9 @@ pipeline {
     PROFILES = 'eureka-client,mail,ldap-with-bind,ldap-auth,remember-me'
     DOCKER_IMAGE = 'bremersee/admin-server'
     DOCKER_HOSTS = 'app1 app2'
-    DOCKER_PUSH = true
-    DEPLOY_ON_APP_SERVER = true
-    SITE = true
+    DOCKER_PUSH = false
+    DEPLOY_ON_APP_SERVER = false
+    SITE = false
     CLEAN = true
   }
   tools {
